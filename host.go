@@ -16,9 +16,10 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/ehmry/go-cjdns/admin"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 func hostCmd(cmd *cobra.Command, args []string) {
@@ -30,7 +31,6 @@ func hostCmd(cmd *cobra.Command, args []string) {
 	var table admin.Routes
 
 	for _, arg := range args {
-
 		if ipRegex.MatchString(arg) {
 			hostname, err := resolveIP(arg)
 			if err != nil {
@@ -55,16 +55,13 @@ func hostCmd(cmd *cobra.Command, args []string) {
 					break tableLoop
 				}
 			}
-
 		} else if hostRegex.MatchString(arg) {
-			ips, err := resolveHost(arg)
+			ip, err := resolveHost(arg)
 			if err != nil {
 				fmt.Fprintln(os.Stderr, "Error:", err)
 				os.Exit(1)
 			}
-			for _, addr := range ips {
-				fmt.Fprintf(os.Stdout, "%v has IPv6 address %v\n", arg, addr)
-			}
+			fmt.Fprintf(os.Stdout, "%v has IPv6 address %v\n", arg, ip)
 		} else {
 			fmt.Fprintln(os.Stderr, "Invalid hostname or IPv6 address specified")
 			os.Exit(1)
